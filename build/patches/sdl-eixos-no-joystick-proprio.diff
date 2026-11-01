@@ -1,0 +1,25 @@
+--- a/src/joystick/linux/SDL_sysjoystick.c
++++ b/src/joystick/linux/SDL_sysjoystick.c
+@@ -1023,7 +1023,8 @@
+ 		}
+ #endif /* USE_LOGICAL_JOYSTICKS */
+ 
+-		SDL_PrivateJoystickHat(SDL_joylist[0].joy, hat,
++		/* x39: o hat vai para o PRÓPRIO joystick (antes: sempre o 0, que misturava os controles no jogador 1) */
++		SDL_PrivateJoystickHat(stick, hat,
+ 			position_map[the_hat->axis[1]][the_hat->axis[0]]);
+ 	}
+ }
+@@ -1067,7 +1068,11 @@
+ 				           events[i].number, events[i].value))
+ #endif
+ 					/* x39: depuração removida */ ; // fprintf(stderr,"JS_EVENT_AXIS axe %d val %d\r\n", events[i].number, events[i].value);
+-					SDL_PrivateJoystickAxis(SDL_joylist[0].joy,
++					/* x39: o eixo de um nó js vai para o PRÓPRIO joystick (antes: sempre o joystick 0, e o direcional
++					 * de um controle USB comandava o jogador 1). O teclado do console continua no joystick 0
++					 * pelo caminho evdev (EV_HandleEvents). */
++					/* o analógico do console chega pelo js0 e precisa continuar no joystick 0 (jogador 1) */
++					SDL_PrivateJoystickAxis(!SDL_strncmp(SDL_SYS_JoystickName(joystick->index), "atc2603c-adckeypad", 18) ? SDL_joylist[0].joy : joystick,
+ 				           events[i].number, events[i].value);
+ 					break;
+ 				}

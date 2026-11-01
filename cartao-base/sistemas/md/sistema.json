@@ -1,0 +1,15 @@
+{
+  "nome": "Mega Drive",
+  "sigla": "MD",
+  "core": "picodrive_libretro.so",
+  "extensoes": [
+    "md",
+    "gen",
+    "smd",
+    "bin",
+    "zip"
+  ],
+  "cor1": "#818CF8",
+  "cor2": "#2E2F7A",
+  "ordem": 130
+}

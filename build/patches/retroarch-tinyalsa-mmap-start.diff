@@ -1,0 +1,159 @@
+diff --git a/audio/drivers/tinyalsa.c b/audio/drivers/tinyalsa.c
+index a5994a8..d00c5f7 100755
+--- a/audio/drivers/tinyalsa.c
++++ b/audio/drivers/tinyalsa.c
+@@ -2154,6 +2154,7 @@ typedef struct tinyalsa
+    bool can_pause;
+    bool is_paused;
+    bool use_mmap;
++   size_t queued_frames; /* x39: quadros escritos desde o último PREPARE, com o PCM parado */
+    int32_t *conversion_buffer;
+    size_t conversion_buffer_size;
+    
+@@ -2276,6 +2277,18 @@ static void *tinyalsa_init(const char *device, unsigned rate,
+       RARCH_LOG("[TinyALSA MMAP]: Successfully opened in MMAP mode\n");
+    }
+ 
++   /* x39: em MMAP o PCM precisa estar PREPARED antes de receber dados
++    * (o PREPARE zera os ponteiros); sem isso ele ficava em SETUP. */
++   if (tinyalsa->use_mmap && pcm_prepare(tinyalsa->pcm) < 0)
++   {
++      RARCH_ERR("[TinyALSA MMAP]: Failed to prepare PCM\n");
++      goto error;
++   }
++   if (tinyalsa->use_mmap)
++      pcm_sync_ptr(tinyalsa->pcm, SNDRV_PCM_SYNC_PTR_APPL |
++            SNDRV_PCM_SYNC_PTR_AVAIL_MIN | SNDRV_PCM_SYNC_PTR_HWSYNC);
++   tinyalsa->queued_frames = 0;
++
+    tinyalsa->buffer_size = pcm_get_buffer_size(tinyalsa->pcm);
+    tinyalsa->frame_bits = 64;  /* S32 stereo = 64 bits/frame */
+    tinyalsa->has_float = false;
+@@ -2285,7 +2298,8 @@ static void *tinyalsa_init(const char *device, unsigned rate,
+    tinyalsa->underrun_count = 0;
+ 
+    /* Alloue buffer de conversion S16->S32 */
+-   tinyalsa->conversion_buffer_size = tinyalsa->buffer_size * 2;
++   /* x39: 256 KB (era buffer_size * 2 = 4 KB, pequeno demais para um bloco de ~800 quadros S16->S32) */
++   tinyalsa->conversion_buffer_size = 256 * 1024;
+    tinyalsa->conversion_buffer = (int32_t*)calloc(1, tinyalsa->conversion_buffer_size);
+    
+    if (!tinyalsa->conversion_buffer)
+@@ -2334,6 +2348,23 @@ static ssize_t tinyalsa_write_mmap(tinyalsa_t *tinyalsa, const void *buf, size_t
+       unsigned int mmap_frames = frames;
+       int ret;
+ 
++      /* x39: XRUN (o emulador atrasou): refaz o PREPARE e recomeça a contagem
++       * para que o stream seja iniciado de novo. */
++      if (tinyalsa->pcm->mmap_status &&
++          tinyalsa->pcm->mmap_status->state == SNDRV_PCM_STATE_XRUN)
++      {
++         tinyalsa->underrun_count++;
++         tinyalsa->pcm->running  = 0;
++         tinyalsa->pcm->prepared = 0;
++         tinyalsa->queued_frames = 0;
++         pcm_prepare(tinyalsa->pcm);
++         /* x39: no modo sync_ptr (sem mmap do status/controle) a cópia do
++          * aplicativo é enviada ao kernel a cada sync; sem puxar o appl_ptr
++          * zerado pelo PREPARE, o valor velho voltaria e o START falharia. */
++         pcm_sync_ptr(tinyalsa->pcm, SNDRV_PCM_SYNC_PTR_APPL |
++               SNDRV_PCM_SYNC_PTR_AVAIL_MIN | SNDRV_PCM_SYNC_PTR_HWSYNC);
++      }
++
+       /* Obtient le buffer MMAP */
+       ret = pcm_mmap_begin(tinyalsa->pcm, &mmap_areas, &mmap_offset, &mmap_frames);
+       
+@@ -2346,6 +2377,19 @@ static ssize_t tinyalsa_write_mmap(tinyalsa_t *tinyalsa, const void *buf, size_t
+ 
+       if (mmap_frames == 0)
+       {
++         /* x39: buffer cheio com o PCM parado nunca esvazia; inicia. */
++         if (!tinyalsa->pcm->running)
++         {
++            if (ioctl(tinyalsa->pcm->fd, SNDRV_PCM_IOCTL_START) < 0)
++            {
++               RARCH_ERR("[TinyALSA MMAP]: Cannot start PCM\n");
++               return -1;
++            }
++            tinyalsa->pcm->running = 1;
++            tinyalsa->queued_frames = 0;
++            continue;
++         }
++
+          /* Buffer plein - attend */
+          if (!tinyalsa->nonblock)
+          {
+@@ -2375,6 +2419,31 @@ static ssize_t tinyalsa_write_mmap(tinyalsa_t *tinyalsa, const void *buf, size_t
+          return -1;
+       }
+ 
++      /* x39: o ALSA não inicia o stream sozinho em MMAP; inicia quando há pelo
++       * menos 2 períodos (1024 quadros) escritos. O contador é nosso porque
++       * avail/appl_ptr se confundem quando passam do tamanho do buffer. */
++      if (!tinyalsa->pcm->running)
++      {
++         tinyalsa->queued_frames += mmap_frames;
++         if (tinyalsa->queued_frames >= 1024)
++         {
++            if (ioctl(tinyalsa->pcm->fd, SNDRV_PCM_IOCTL_START) < 0)
++            {
++               static unsigned start_errs;
++               if (start_errs++ < 5)
++                  RARCH_ERR("[TinyALSA MMAP]: Cannot start PCM: %s (appl=%lu hw=%lu)\n",
++                        strerror(errno),
++                        (unsigned long)tinyalsa->pcm->mmap_control->appl_ptr,
++                        (unsigned long)tinyalsa->pcm->mmap_status->hw_ptr);
++            }
++            else
++            {
++               tinyalsa->pcm->running = 1;
++               tinyalsa->queued_frames = 0;
++            }
++         }
++      }
++
+       written += mmap_frames;
+       data += mmap_frames * bytes_per_frame;
+       frames -= mmap_frames;
+@@ -2432,8 +2501,10 @@ static ssize_t tinyalsa_write(void *data, const void *buf_, size_t size_)
+ 
+    tinyalsa->write_count++;
+ 
+-   /* Détecte et convertis S16->S32 si nécessaire */
+-   bool need_conversion = (size_ % 4 != 0);
++   /* x39: o RetroArch entrega S16 estéreo (use_float = false). Detectar pelo tamanho (size_ % 4) nunca
++    * acionava a conversão: os dados S16 eram lidos como S32, o driver gravava METADE dos quadros e o jogo
++    * era segurado a 2x a velocidade (120 retro_run/s em vez de 60), com o som a 2x. Sempre converte. */
++   bool need_conversion = true;
+    
+    if (need_conversion)
+    {
+@@ -2470,11 +2541,24 @@ static ssize_t tinyalsa_write(void *data, const void *buf_, size_t size_)
+    else
+       result = tinyalsa_write_rw(tinyalsa, write_buf, frames);
+ 
+-   /* Log stats périodiquement */
+-   if ((tinyalsa->write_count % 1000) == 0)
++   /* x39: mede a taxa real de áudio entregue (48000 quadros/s = tempo real) */
+    {
+-      RARCH_LOG("[TinyALSA MMAP]: Stats - writes:%lu, underruns:%lu\n",
+-                tinyalsa->write_count, tinyalsa->underrun_count);
++      static struct timespec t_prev;
++      static unsigned long frames_acc;
++      frames_acc += frames;
++      if ((tinyalsa->write_count % 1000) == 0)
++      {
++         struct timespec t_now;
++         double secs = 0.0;
++         clock_gettime(CLOCK_MONOTONIC, &t_now);
++         if (t_prev.tv_sec || t_prev.tv_nsec)
++            secs = (t_now.tv_sec - t_prev.tv_sec) + (t_now.tv_nsec - t_prev.tv_nsec) / 1e9;
++         RARCH_LOG("[TinyALSA MMAP]: Stats - writes:%lu, underruns:%lu, %.2fs, %.0f quadros/s, nonblock:%d\n",
++                   tinyalsa->write_count, tinyalsa->underrun_count, secs,
++                   secs > 0.0 ? frames_acc / secs : 0.0, (int)tinyalsa->nonblock);
++         t_prev    = t_now;
++         frames_acc = 0;
++      }
+    }
+ 
+    return result;

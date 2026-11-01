@@ -1,0 +1,12 @@
+LANÇADOR X39
+============
+Este cartão contém o lançador de emuladores do X39. A memória interna do console não
+é usada para jogos: tudo roda a partir da RAM e deste cartão.
+
+ROMs:   coloque os jogos nas pastas de x39/roms/<sistema>/ (uma pasta por sistema).
+        O lançador só mostra os sistemas que tiverem jogos.
+Dados:  x39/data/ guarda saves, estados, favoritos e recentes.
+
+Para desligar o lançador neste cartão, apague o arquivo x39/ATIVO.
+Para voltar ao menu original a qualquer momento: Menu > "Menu original do console",
+ou tire este cartão e reinicie.

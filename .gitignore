@@ -1,0 +1,40 @@
+# binários e artefatos (o Makefile recompila tudo)
+launcher/launcher-arm
+jail/x39jail
+jail/x39jail-novo
+jail/x39jail-host-novo
+jail/x39jail-host
+/x39jail
+/x39jail-host
+tools/diagnostico/evlog/evlog-arm
+tools/diagnostico/fbwake/fbwake-arm
+tools/diagnostico/fbcount/fbcount-arm
+tools/diagnostico/corebench/corebench-arm
+tools/diagnostico/corewrap/corewrap_libretro.so
+jail/fbtest/fbtest-arm
+pacote/x39jail
+pacote/app/retroarch
+pacote/app/cores/
+pacote/rt/
+bin/
+*.so
+
+# ambiente de compilação (baixado/gerado localmente)
+toolchain/
+build/src/
+build/prefix/
+build/cores-out/
+build/logs/
+build/retroarch/
+build/retroarch.unstripped
+*.log
+
+# ROMs, BIOS, cartão montado e backups da NAND: nunca no repositório
+roms/
+*.nes
+*.sms
+*.gg
+*.a26
+*.img
+tools/diagnostico/fbinfo/fbinfo-arm
+tools/diagnostico/sdljoy/sdljoy-arm

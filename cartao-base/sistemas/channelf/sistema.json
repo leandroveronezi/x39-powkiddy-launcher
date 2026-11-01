@@ -1,0 +1,14 @@
+{
+  "nome": "Fairchild Channel F",
+  "sigla": "CHF",
+  "core": "freechaf_libretro.so",
+  "extensoes": [
+    "bin",
+    "rom",
+    "chf",
+    "zip"
+  ],
+  "cor1": "#A3E635",
+  "cor2": "#365314",
+  "ordem": 220
+}

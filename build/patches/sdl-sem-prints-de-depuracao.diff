@@ -1,0 +1,65 @@
+diff --git a/configure b/configure
+old mode 100644
+new mode 100755
+diff --git a/src/joystick/linux/SDL_sysjoystick.c b/src/joystick/linux/SDL_sysjoystick.c
+index 9e1c47e..84af58a 100644
+--- a/src/joystick/linux/SDL_sysjoystick.c
++++ b/src/joystick/linux/SDL_sysjoystick.c
+@@ -1066,7 +1066,7 @@ static __inline__ void JS_HandleEvents(SDL_Joystick *joystick)
+ 					if (!LogicalJoystickAxis(joystick,
+ 				           events[i].number, events[i].value))
+ #endif
+-					fprintf(stderr,"JS_EVENT_AXIS axe %d val %d\r\n", events[i].number, events[i].value);
++					/* x39: depuração removida */ ; // fprintf(stderr,"JS_EVENT_AXIS axe %d val %d\r\n", events[i].number, events[i].value);
+ 					SDL_PrivateJoystickAxis(SDL_joylist[0].joy,
+ 				           events[i].number, events[i].value);
+ 					break;
+@@ -1166,7 +1166,7 @@ static __inline__ void EV_HandleEvents(SDL_Joystick *joystick)
+ #endif
+ 
+ //always fire the events to device 0
+-					fprintf(stderr,"code %d mapped to button %d\r\n", code, joystick->hwdata->key_map[code]);
++					/* x39: depuração removida */ // fprintf(stderr,"code %d mapped to button %d\r\n", code, joystick->hwdata->key_map[code]);
+ 					SDL_PrivateJoystickButton(SDL_joylist[0].joy,
+ 				           joystick->hwdata->key_map[code],
+ 					   events[i].value);
+@@ -1186,7 +1186,7 @@ static __inline__ void EV_HandleEvents(SDL_Joystick *joystick)
+ 				    case ABS_HAT3X:
+ 				    case ABS_HAT3Y:
+ 					code -= ABS_HAT0X;
+-					fprintf(stderr,"HAT code %d mapped to button %d\r\n", code);
++					/* x39: depuração removida */ // fprintf(stderr,"HAT code %d mapped to button %d\r\n", code);
+ 					HandleHat(joystick, code/2, code%2,
+ 							events[i].value);
+ 					break;
+@@ -1198,7 +1198,7 @@ static __inline__ void EV_HandleEvents(SDL_Joystick *joystick)
+ 				           joystick->hwdata->abs_map[code],
+ 					   events[i].value))
+ #endif
+-					fprintf(stderr,"ABS code %d mapped to button %d\r\n", code, joystick->hwdata->key_map[code]);
++					/* x39: depuração removida */ ; // fprintf(stderr,"ABS code %d mapped to button %d\r\n", code, joystick->hwdata->key_map[code]);
+ 					  SDL_PrivateJoystickAxis(SDL_joylist[0].joy,
+ 				           joystick->hwdata->abs_map[code],
+ 					   events[i].value);
+diff --git a/src/video/fbcon/SDL_fbevents.c b/src/video/fbcon/SDL_fbevents.c
+index 741ffab..fe8312e 100644
+--- a/src/video/fbcon/SDL_fbevents.c
++++ b/src/video/fbcon/SDL_fbevents.c
+@@ -97,7 +97,7 @@ static int evdev_fd[2] = { -1, -1 };
+  * Extend this table if your device has extra buttons. */
+ static SDLKey powkiddy_translate_key(int code)
+ {
+-	fprintf(stderr, "POWKIDDY TRANSLATE KEY Code %d\n", code);
++	/* x39: depuração removida */ // fprintf(stderr, "POWKIDDY TRANSLATE KEY Code %d\n", code);
+     switch (code) {
+     /* D-pad — gpio-keys, standard keycodes */
+     case KEY_UP:            return SDLK_UP;
+@@ -182,7 +182,7 @@ static int powkiddy_handle_evdev(int fd)
+         keysym.sym      = powkiddy_translate_key(ev.code);
+         keysym.mod      = KMOD_NONE;
+         keysym.unicode  = 0;
+-		fprintf(stderr, "Keycode scancode %d sym %d\n", keysym.scancode, keysym.sym);
++		/* x39: depuração removida */ // fprintf(stderr, "Keycode scancode %d sym %d\n", keysym.scancode, keysym.sym);
+         if (keysym.sym == SDLK_UNKNOWN) continue;
+ 
+         posted += SDL_PrivateKeyboard(

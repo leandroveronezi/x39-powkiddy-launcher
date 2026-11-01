@@ -1,0 +1,13 @@
+{
+  "nome": "WonderSwan",
+  "sigla": "WS",
+  "core": "mednafen_wswan_libretro.so",
+  "extensoes": [
+    "ws",
+    "wsc",
+    "zip"
+  ],
+  "cor1": "#38BDF8",
+  "cor2": "#0A4468",
+  "ordem": 80
+}

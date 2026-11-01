@@ -1,0 +1,19 @@
+{
+  "nome": "ZX Spectrum",
+  "sigla": "ZX",
+  "core": "fuse_libretro.so",
+  "extensoes": [
+    "tzx",
+    "tap",
+    "z80",
+    "sna",
+    "szx",
+    "trd",
+    "scl",
+    "dsk",
+    "zip"
+  ],
+  "cor1": "#2563EB",
+  "cor2": "#172554",
+  "ordem": 240
+}

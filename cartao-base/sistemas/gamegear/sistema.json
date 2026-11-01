@@ -1,0 +1,12 @@
+{
+  "nome": "Game Gear",
+  "sigla": "GG",
+  "core": "picodrive_libretro.so",
+  "extensoes": [
+    "gg",
+    "zip"
+  ],
+  "cor1": "#3B82F6",
+  "cor2": "#1E3A8A",
+  "ordem": 20
+}

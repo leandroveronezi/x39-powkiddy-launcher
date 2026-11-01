@@ -1,0 +1,12 @@
+{
+  "nome": "Pokémon Mini",
+  "sigla": "MINI",
+  "core": "pokemini_libretro.so",
+  "extensoes": [
+    "min",
+    "zip"
+  ],
+  "cor1": "#F472B6",
+  "cor2": "#831843",
+  "ordem": 230
+}

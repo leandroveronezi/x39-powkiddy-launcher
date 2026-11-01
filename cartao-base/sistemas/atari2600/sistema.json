@@ -1,0 +1,13 @@
+{
+  "nome": "Atari 2600",
+  "sigla": "2600",
+  "core": "stella2014_libretro.so",
+  "extensoes": [
+    "a26",
+    "bin",
+    "zip"
+  ],
+  "cor1": "#F59E0B",
+  "cor2": "#9A4A06",
+  "ordem": 30
+}

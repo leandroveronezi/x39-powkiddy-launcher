@@ -1,0 +1,13 @@
+{
+  "nome": "ColecoVision",
+  "sigla": "CV",
+  "core": "bluemsx_libretro.so",
+  "extensoes": [
+    "col",
+    "rom",
+    "zip"
+  ],
+  "cor1": "#D946EF",
+  "cor2": "#6A1A78",
+  "ordem": 110
+}

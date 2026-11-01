@@ -1,0 +1,13 @@
+{
+  "nome": "Master System",
+  "sigla": "SMS",
+  "core": "picodrive_libretro.so",
+  "extensoes": [
+    "sms",
+    "sg",
+    "zip"
+  ],
+  "cor1": "#E8344A",
+  "cor2": "#7A1226",
+  "ordem": 10
+}

@@ -1,0 +1,12 @@
+{
+  "nome": "Atari Lynx",
+  "sigla": "LYNX",
+  "core": "handy_libretro.so",
+  "extensoes": [
+    "lnx",
+    "zip"
+  ],
+  "cor1": "#10B981",
+  "cor2": "#064E3B",
+  "ordem": 50
+}

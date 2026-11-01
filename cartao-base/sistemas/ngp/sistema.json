@@ -1,0 +1,13 @@
+{
+  "nome": "Neo Geo Pocket",
+  "sigla": "NGP",
+  "core": "mednafen_ngp_libretro.so",
+  "extensoes": [
+    "ngp",
+    "ngc",
+    "zip"
+  ],
+  "cor1": "#A78BFA",
+  "cor2": "#45208A",
+  "ordem": 90
+}

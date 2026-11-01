@@ -1,0 +1,12 @@
+{
+  "nome": "Game & Watch",
+  "sigla": "G&W",
+  "core": "gw_libretro.so",
+  "extensoes": [
+    "mgw",
+    "zip"
+  ],
+  "cor1": "#9CA3AF",
+  "cor2": "#374151",
+  "ordem": 200
+}

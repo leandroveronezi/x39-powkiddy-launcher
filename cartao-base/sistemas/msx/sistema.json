@@ -1,0 +1,16 @@
+{
+  "nome": "MSX",
+  "sigla": "MSX",
+  "core": "bluemsx_libretro.so",
+  "extensoes": [
+    "rom",
+    "mx1",
+    "mx2",
+    "dsk",
+    "cas",
+    "zip"
+  ],
+  "cor1": "#22D3EE",
+  "cor2": "#0E5870",
+  "ordem": 100
+}

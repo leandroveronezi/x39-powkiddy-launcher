@@ -1,0 +1,12 @@
+{
+  "nome": "Odyssey 2",
+  "sigla": "O2",
+  "core": "o2em_libretro.so",
+  "extensoes": [
+    "bin",
+    "zip"
+  ],
+  "cor1": "#F97316",
+  "cor2": "#7C2D12",
+  "ordem": 210
+}

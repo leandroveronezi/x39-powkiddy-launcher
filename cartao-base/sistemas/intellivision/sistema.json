@@ -1,0 +1,14 @@
+{
+  "nome": "Intellivision",
+  "sigla": "INTV",
+  "core": "freeintv_libretro.so",
+  "extensoes": [
+    "int",
+    "rom",
+    "bin",
+    "zip"
+  ],
+  "cor1": "#FACC15",
+  "cor2": "#946006",
+  "ordem": 120
+}

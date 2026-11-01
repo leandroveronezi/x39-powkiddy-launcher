@@ -1,0 +1,12 @@
+{
+  "nome": "PC Engine",
+  "sigla": "PCE",
+  "core": "mednafen_pce_fast_libretro.so",
+  "extensoes": [
+    "pce",
+    "zip"
+  ],
+  "cor1": "#FB7185",
+  "cor2": "#8E1236",
+  "ordem": 70
+}

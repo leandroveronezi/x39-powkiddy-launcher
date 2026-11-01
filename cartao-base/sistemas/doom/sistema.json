@@ -1,0 +1,14 @@
+{
+  "nome": "Doom",
+  "sigla": "DOOM",
+  "core": "prboom_libretro.so",
+  "extensoes": [
+    "wad",
+    "iwad",
+    "pwad",
+    "zip"
+  ],
+  "cor1": "#DC2626",
+  "cor2": "#450A0A",
+  "ordem": 260
+}

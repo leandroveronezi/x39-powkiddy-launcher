@@ -1,0 +1,17 @@
+{
+  "nome": "Amstrad CPC",
+  "sigla": "CPC",
+  "core": "cap32_libretro.so",
+  "extensoes": [
+    "dsk",
+    "sna",
+    "tap",
+    "cdt",
+    "voc",
+    "cpr",
+    "zip"
+  ],
+  "cor1": "#EAB308",
+  "cor2": "#713F12",
+  "ordem": 250
+}

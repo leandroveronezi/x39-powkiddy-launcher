@@ -1,0 +1,15 @@
+{
+  "nome": "Atari 5200 / 800",
+  "sigla": "5200",
+  "core": "atari800_libretro.so",
+  "extensoes": [
+    "a52",
+    "atr",
+    "xex",
+    "bin",
+    "zip"
+  ],
+  "cor1": "#6B8AAE",
+  "cor2": "#2A3C57",
+  "ordem": 60
+}

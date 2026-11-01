@@ -1,0 +1,13 @@
+{
+  "nome": "Atari 7800",
+  "sigla": "7800",
+  "core": "prosystem_libretro.so",
+  "extensoes": [
+    "a78",
+    "bin",
+    "zip"
+  ],
+  "cor1": "#94A3B8",
+  "cor2": "#3D4B60",
+  "ordem": 40
+}

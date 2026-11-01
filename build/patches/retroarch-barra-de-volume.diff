@@ -1,0 +1,106 @@
+diff --git a/command.c b/command.c
+index 9992ff4..df59ed2 100644
+--- a/command.c
++++ b/command.c
+@@ -921,9 +921,10 @@ void command_event_set_volume(
+ {
+    size_t _len;
+    char msg[128];
+-   float new_volume = settings->floats.audio_volume + gain;
+-   new_volume       = MAX(new_volume, -80.0f);
+-   new_volume       = MIN(new_volume, 12.0f);
++   /* x39: passo de 1 dB (o padrão é 0,5) e faixa útil de -40 a 0 dB (acima de 0 dB distorce) */
++   float new_volume = settings->floats.audio_volume + gain * 2.0f;
++   new_volume       = MAX(new_volume, -40.0f);
++   new_volume       = MIN(new_volume, 0.0f);
+    configuration_set_float(settings, settings->floats.audio_volume, new_volume);
+    _len             = strlcpy(msg, msg_hash_to_str(MSG_AUDIO_VOLUME),
+          sizeof(msg));
+diff --git a/gfx/drivers/sdl_gfx.c b/gfx/drivers/sdl_gfx.c
+index 4584037..bb81e56 100644
+--- a/gfx/drivers/sdl_gfx.c
++++ b/gfx/drivers/sdl_gfx.c
+@@ -363,6 +363,70 @@ static void sdl_gfx_check_window(sdl_video_t *vid)
+    }
+ }
+ 
++/* x39: barra de volume desenhada direto no quadro (sem fonte), como no firmware
++ * original. Aparece por ~2 s quando audio_volume muda. Faixa útil: -40 a 0 dB. */
++#define X39_VOL_MIN_DB   (-40.0f)
++#define X39_VOL_MAX_DB   (0.0f)
++#define X39_VOL_BAR_FRAMES 120
++
++static void x39_fill_rect(SDL_Surface *s, int x, int y, int w, int h, uint32_t argb)
++{
++   int ix, iy;
++   for (iy = y; iy < y + h; iy++)
++   {
++      uint32_t *row;
++      if (iy < 0 || iy >= s->h)
++         continue;
++      row = (uint32_t*)((uint8_t*)s->pixels + iy * s->pitch);
++      for (ix = x; ix < x + w; ix++)
++         if (ix >= 0 && ix < s->w)
++            row[ix] = argb;
++   }
++}
++
++static void x39_draw_volume_bar(SDL_Surface *s)
++{
++   static float last_vol   = 0.0f;
++   static bool  have_last  = false;
++   static int   frames_left = 0;
++   settings_t *settings    = config_get_ptr();
++   float v, p;
++   int bw, bh, bx, by, fill;
++
++   if (!settings || !s || s->format->BitsPerPixel != 32)
++      return;
++
++   v = settings->floats.audio_volume;
++   if (!have_last)
++   {
++      last_vol  = v;
++      have_last = true;
++   }
++   else if (v != last_vol)
++   {
++      last_vol    = v;
++      frames_left = X39_VOL_BAR_FRAMES;
++   }
++
++   if (frames_left <= 0)
++      return;
++   frames_left--;
++
++   p = (v - X39_VOL_MIN_DB) / (X39_VOL_MAX_DB - X39_VOL_MIN_DB);
++   if (p < 0.0f) p = 0.0f;
++   if (p > 1.0f) p = 1.0f;
++
++   bw = s->w / 2;
++   bh = 16;
++   bx = (s->w - bw) / 2;
++   by = s->h - 36;
++   fill = (int)((bw - 8) * p);
++
++   x39_fill_rect(s, bx,     by,     bw,     bh,     0xFFFFFFFF); /* moldura */
++   x39_fill_rect(s, bx + 2, by + 2, bw - 4, bh - 4, 0xFF000000); /* fundo   */
++   x39_fill_rect(s, bx + 4, by + 4, fill,   bh - 8, 0xFF40D040); /* nível   */
++}
++
+ static bool sdl_gfx_frame(void *data, const void *frame, unsigned width,
+       unsigned height, uint64_t frame_count,
+       unsigned pitch, const char *msg, video_frame_info_t *video_info)
+@@ -409,6 +473,12 @@ static bool sdl_gfx_frame(void *data, const void *frame, unsigned width,
+          SDL_UnlockSurface(vid->screen);
+    }
+ 
++   if (SDL_MUSTLOCK(vid->screen))
++      SDL_LockSurface(vid->screen);
++   x39_draw_volume_bar(vid->screen);
++   if (SDL_MUSTLOCK(vid->screen))
++      SDL_UnlockSurface(vid->screen);
++
+    if (title[0])
+       SDL_WM_SetCaption(title, NULL);
+ 
