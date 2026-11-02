@@ -349,6 +349,8 @@ Para conferir um cartão: `cd <cartão>/x39 && sha256sum -c MANIFESTO.sha256` (t
 
 ## Pendências
 
+> Estado atual e próximos passos para retomar numa nova sessão: **`docs/estado-e-proximos-passos.md`**.
+
 - **Antes de instalar qualquer gancho na memória interna:** esclarecer como entrar no recovery/ADFU (ver
   `docs/boot-e-recuperacao.md`). O dono do aparelho pediu cautela: houve vários erros nossos nos testes.
 - **Tela original depois do lançador:** o firmware não se redesenha sozinho; hoje só tirar os dois cabos do PC o faz voltar.
