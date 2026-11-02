@@ -169,6 +169,12 @@ reafirmada 4 vezes por segundo; **nenhum sinal é enviado a processos do firmwar
 `atc2603c-adckeypad` (event1) = joystick como eixos (`±128` ao empurrar, `0` ao soltar) **e** a cruz direcional como
 teclas `103/105/106/108`; `atc260x_onoff` (event0) = botão de ligar.
 
+## Backup da memória interna (obrigatório antes de qualquer gravação)
+`instalacao/backup-nand.sh <pasta>` lê as 8 partições pelo ADB (só leitura) e confere o MD5 no PC contra o do console.
+`instalacao/verifica-backup.sh <pasta> [--console]` confere se o backup existe e está íntegro (`--console` também compara com o
+aparelho: igual = ele continua original). Os scripts recusam guardar dentro do repositório e sobrescrever um backup existente.
+Qualquer procedimento que altere o aparelho deve rodar a verificação primeiro. Veja a regra em `CLAUDE.md`.
+
 ## Primeira instalação (a ÚNICA gravação na memória interna)
 
 **Risco real:** com `/var/upgrade/test.sh` presente, o `rcS` **não** inicia o `manager` sozinho. Se esse arquivo falhar

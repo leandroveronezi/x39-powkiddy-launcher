@@ -12,6 +12,12 @@ firmware original. Leia o `README.md` antes de mexer.
 - O gancho de boot (`test.sh` (fora do repositório), único arquivo que iria à NAND) **só se instala com OK explícito, com o dono
   presente**, em etapas (veja o README). Não contornar bloqueios do sistema de permissões (por exemplo, `kill -9` do
   `manager` real foi negado: o assumir o `manager` nunca foi rodado; o modo `suave` com `SIGSTOP` também foi abandonado, veja acima).
+- **Backup antes de qualquer alteração no aparelho (regra fixa).** Antes de gravar algo na NAND, instalar o gancho, aplicar
+  um `update.zip`/`.fw` ou qualquer coisa que altere o aparelho: (1) rodar `instalacao/verifica-backup.sh <pasta-do-backup> --console`;
+  (2) se não houver backup ou algo não bater, rodar `instalacao/backup-nand.sh <pasta>` (só lê) e conferir; (3) **dizer ao dono o
+  resultado e pedir OK**. Sem backup conferido, não se grava nada. Enquanto a NAND nunca foi gravada o próprio aparelho é a fonte do
+  backup; depois de qualquer gravação o backup antigo passa a ser a única cópia do estado original. O backup é um dump do
+  aparelho do dono e nunca vai para o repositório.
 - **Nunca enviar sinais (`SIGSTOP`, `SIGKILL`…) a processos do firmware** (`manager`, `launcher`, `msg_server`,
   `audio_service`): o `manager` os supervisiona e reinicia o sistema (3 reinícios espontâneos em 24/10/2026).
 - Console com dois ADB: usar sempre `-s 0123456789ABCDEF`. O ADB só funciona com os dois cabos USB ligados.
