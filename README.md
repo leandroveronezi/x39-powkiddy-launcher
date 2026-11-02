@@ -373,3 +373,5 @@ Para conferir um cartão: `cd <cartão>/x39 && sha256sum -c MANIFESTO.sha256` (t
   `ensaio-gancho.sh`, `prova-execucao.sh`) foram tirados do repositório de propósito: não se instala nada na NAND antes de existir
   um caminho de recuperação testado (ver `docs/boot-e-recuperacao.md`). `instalacao/gancho.sh` fica porque só vai para o cartão e
   não faz nada sem o `test.sh` instalado.
+- **Binários ignorados pelo Git** (RetroArch, cores, `rt/lib`, `tinymix`, jaula, lançador): de onde vêm e como refazer em
+  `docs/binarios-e-origem.md` (com `build/prepara-fontes.sh` e `build/monta-pacote.sh`). Firmware oficial: `docs/firmware-oficial.md`.
