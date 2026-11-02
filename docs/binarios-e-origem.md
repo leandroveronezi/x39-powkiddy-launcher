@@ -52,4 +52,4 @@ make jail && ./test-nand.sh && make jail-instalar     # jaula: confira com o tes
 antes de compilar. Os binários compilados **não são idênticos byte a byte** entre máquinas; confira por teste (`corebench`).
 
 ## Firmware oficial
-Não é distribuído aqui. Origem e hashes em `docs/firmware-oficial.md`.
+Espelho na release do GitHub (não no código). Origem, link e hashes em `docs/firmware-oficial.md`.

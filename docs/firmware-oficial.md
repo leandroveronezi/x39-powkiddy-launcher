@@ -1,6 +1,8 @@
 # Firmware oficial do Powkiddy X39 (para recuperação)
 
-**Este repositório não distribui o firmware**: é um programa do fabricante. Aqui estão a origem e os hashes para baixar e conferir.
+O firmware é um programa do fabricante. O código do repositório não o inclui, mas há um **espelho sem alterações** na release
+[firmware-oficial-x39-v2.0-220905](https://github.com/leandroveronezi/x39-powkiddy-launcher/releases/tag/firmware-oficial-x39-v2.0-220905),
+guardado só para recuperação, caso o link original saia do ar. Abaixo estão a origem e os hashes para conferir.
 
 ## O que serve para o X39 comum (480×272, ATM7051, DDR 128 MB)
 Versão 2.0.00.220905.2021 (05/09/2022).
